@@ -1,66 +1,36 @@
-#include "Operation.h"
-#include <time.h>
-#include <stdio.h>
-
-int random(int max)
+#include "operation.h"
+#include "TreePoint.h"
+#include <iostream>
+Operation::Operation():root(NULL),ans()
 {
-	srand((unsigned)time(NULL));
-	double x;
-	x=(rand())/(max+1);
-	return x;
+	Fraction *p;
+	root=new TreePoint(1,1);
+	while ((p=root->compute())==NULL) //if setans() return 1, this tree has error
+	{
+		delete root;
+		root=new TreePoint(1,1);
+	}
+	ans=Fraction(*p);
+
 }
-
-//public 
-
-Operation::Operation() :prep(NULL),next(NULL),symbol("0"),priority(0),deno(0),nume(0),ans(0)
-{
-
-}//default init
+//default constructor
 
 
 Operation::~Operation()
 {
-
+	delete root;
 }
 
-Operation* Operation::newop()
+Operation::Operation(const Operation &from)
 {
-
+	root=new TreePoint(*(from.root));
 }
-
-int Operation::print(int lastpri)
+int Operation::print()
 {
-
+	root->print(0);
 }
-
-//private
-char Operation::newsymbol()
+Fraction Operation::getans()
 {
-
-}
-
-int Operation::newnum()
-{
-
-}
-
-int Operation::plus()
-{
-
-}
-
-int Operation::minus()
-{
-
-}
-
-int Operation::multi()
-{
-
-}
-
-int Operation::divide()
-{
-
+	return ans;
 }
 
