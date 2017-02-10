@@ -123,7 +123,7 @@ int TreePoint::print(int lastpri)// first time lastpri=0
 	if (symbol!='0'&&symbol!='/')
 		{std::cout<<" "<<symbol<<" ";wid+=3;}
 	else if (symbol=='/')
-		{std::cout<<" Ã· ";wid+=4;}
+		{std::cout<<" ¡Â ";wid+=4;}
 	else {wid+=(num->print());}
 	if (next!=NULL)
 		next->print(rightpriority);
