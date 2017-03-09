@@ -118,9 +118,9 @@
   <ItemGroup>
     <EmbeddedResource Include="LangList.resx" />
     <EmbeddedResource Include="Resource.en-US.resx" />
-    <EmbeddedResource Include="Resource.fra-FRA.resx" />
-    <EmbeddedResource Include="Resource.ger-DE.resx" />
-    <EmbeddedResource Include="Resource.ja-JAP.resx" />
+    <EmbeddedResource Include="Resource.fr-FR.resx" />
+    <EmbeddedResource Include="Resource.de-DE.resx" />
+    <EmbeddedResource Include="Resource.ja-JP.resx" />
     <EmbeddedResource Include="Resource.resx" />
     <EmbeddedResource Include="Resource.zh-CN.resx" />
   </ItemGroup>

@@ -52,13 +52,13 @@
     <EmbeddedResource Include="Resource.en-US.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resource.fra-FRA.resx">
+    <EmbeddedResource Include="Resource.ja-JP.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resource.ger-DE.resx">
+    <EmbeddedResource Include="Resource.fr-FR.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resource.ja-JAP.resx">
+    <EmbeddedResource Include="Resource.de-DE.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

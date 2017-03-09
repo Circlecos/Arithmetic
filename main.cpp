@@ -35,8 +35,11 @@ int main()
 	while (idlanginfo->MoveNext())
 	{
 		NumLang++;
-		Console::WriteLine("{0}:{1,-7}", NumLang, idlanginfo->Key);
+		Console::OutputEncoding=gcnew System::Text::UnicodeEncoding;
+		Console::InputEncoding = Console::OutputEncoding;
+		Console::WriteLine("{0}:{1,-7}", NumLang, (idlanginfo->Key)->ToString()->Normalize());
 	}
+
 	std::cout << "Please enter the prompt language by its name:";
 	
 	//读入用户选择的语言和对应的resource
