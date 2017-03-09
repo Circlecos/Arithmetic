@@ -28,6 +28,10 @@ int main()
 	CultureInfo^ DefaultLoca = gcnew CultureInfo("", false);
 	ResourceSet^ RcLangInfo = RcLang.GetResourceSet(DefaultLoca, true, true);
 
+
+	//设置IO采用UnicodeEncoding
+	Console::OutputEncoding = gcnew System::Text::UnicodeEncoding;
+	Console::InputEncoding = Console::OutputEncoding;
 	
 	//输出可以使用的语言
 	int NumLang = 0;
@@ -35,30 +39,37 @@ int main()
 	while (idlanginfo->MoveNext())
 	{
 		NumLang++;
-		Console::OutputEncoding=gcnew System::Text::UnicodeEncoding;
-		Console::InputEncoding = Console::OutputEncoding;
 		Console::WriteLine("{0}:{1,-7}", NumLang, (idlanginfo->Key)->ToString()->Normalize());
 	}
 
-	std::cout << "Please enter the prompt language by its name:";
-	
 	//读入用户选择的语言和对应的resource
-	String^ str = Console::ReadLine();
-	idlanginfo->Reset();
-	int isLang=0;
-	while (idlanginfo->MoveNext())//判断用户输入的语言是否已设置
+	Console::Write("Please enter the prompt language by its name:");
+	String^ str;
+	int isLang = 0;
+	while (str = Console::ReadLine())
 	{
-		if ((idlanginfo->Key->ToString()->Equals(str)))
-			isLang=1;
+		idlanginfo->Reset();
+		while (idlanginfo->MoveNext())
+		{
+			if ((idlanginfo->Key->ToString()->Equals(str)))//判断用户输入的语言是否已设置
+				isLang=1;
+		}
+		if (isLang == 1) break;
+		else if (isLang == 0)
+		{
+			Console::WriteLine("The input is error!");
+			Console::Write("Please enter the prompt language by its name:");
+		}
 	}
-	if (isLang == 0) { Console::WriteLine("The input is error!"); return 1; }
+
+	//读入用户对应的resource
 	ResourceManager rc("Resource", CurrentAssem);
 	CultureInfo^ loca = gcnew CultureInfo(RcLang.GetString(str), false);
 
 	//读入将生成的问题数量
 	int NumProblem;
 	Console::Write("{0}", rc.GetString("InputNumberOfProblems", loca));
-	cin >> NumProblem;
+	std::cin>>NumProblem;
 
 	//关于作答的其他说明
 	Console::WriteLine("{0}\n", rc.GetString("InputNote", loca)); 
@@ -79,9 +90,12 @@ int main()
 	for (j = 0; j<NumProblem; j++)
 	{
 		Problem[j] = new Operation();
-		cout << j + 1 << ". ";
+
+		String^ ProblemCodeStr = ((j+1).ToString());
+		ProblemCodeStr = System::String::Concat(ProblemCodeStr, ".");
+		Console::Write("{0,-5}", ProblemCodeStr);
 		(Problem[j])->print();
-		cout << " = ";
+		Console::Write(" = ");
 		cin >> ans;
 		len = strlen(ans);
 		judge = 0;
@@ -132,18 +146,20 @@ int main()
 		Console::WriteLine("{0}", rc.GetString("DetailMistake", loca));
 		for (i = 0; i < WrongNum; i++)
 		{
-			cout << endl;
+			Console::WriteLine();
 			WrongCode = WrongQueNum[i];
-			cout << WrongCode + 1 << ". ";
+			String^ WrongCodeStr=((WrongCode+1).ToString());
+			WrongCodeStr=System::String::Concat(WrongCodeStr, ".");
+			Console::Write("{0,-5}", WrongCodeStr);
 			(Problem[WrongCode])->print();
-			cout << " = ";
+			Console::Write(" = ");
 			((Problem[WrongCode])->getans()).print();
-			cout << endl;
-			Console::Write("{0,4}", rc.GetString("YourAnswer", loca));
-			cout << intans[WrongCode] << endl;
+			Console::WriteLine();
+			Console::Write("     {0}", rc.GetString("YourAnswer", loca));
+			Console::Write("{0}\n",intans[WrongCode]);
 		}
 	}
-	cout << endl;
+	Console::WriteLine();
 
 	//结束程序前处理	
 	for (i = 0; i<MAX_NUM_OF_PROBLEM; i++)

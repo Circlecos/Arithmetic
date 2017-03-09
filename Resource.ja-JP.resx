@@ -136,6 +136,6 @@
     <value>質問のエラー番号：</value>
   </data>
   <data name="YourAnswer" xml:space="preserve">
-    <value>あなたの答え：</value>
+    <value>あなたの答え： </value>
   </data>
 </root>

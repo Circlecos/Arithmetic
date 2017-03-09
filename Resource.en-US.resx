@@ -136,6 +136,6 @@
     <value>Wrong:</value>
   </data>
   <data name="YourAnswer" xml:space="preserve">
-    <value>Your answer is</value>
+    <value>Your answer:</value>
   </data>
 </root>
