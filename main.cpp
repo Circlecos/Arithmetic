@@ -44,12 +44,20 @@ int main()
 	
 	//读入用户选择的语言和对应的resource
 	String^ str = Console::ReadLine();
+	idlanginfo->Reset();
+	int isLang=0;
+	while (idlanginfo->MoveNext())//判断用户输入的语言是否已设置
+	{
+		if ((idlanginfo->Key->ToString()->Equals(str)))
+			isLang=1;
+	}
+	if (isLang == 0) { Console::WriteLine("The input is error!"); return 1; }
 	ResourceManager rc("Resource", CurrentAssem);
 	CultureInfo^ loca = gcnew CultureInfo(RcLang.GetString(str), false);
 
 	//读入将生成的问题数量
 	int NumProblem;
-	Console::Write("{0}\n", rc.GetString("InputNumberOfProblems", loca));
+	Console::Write("{0}", rc.GetString("InputNumberOfProblems", loca));
 	cin >> NumProblem;
 
 	//关于作答的其他说明
@@ -126,7 +134,7 @@ int main()
 		{
 			cout << endl;
 			WrongCode = WrongQueNum[i];
-			cout << WrongCode + 1 << ".";
+			cout << WrongCode + 1 << ". ";
 			(Problem[WrongCode])->print();
 			cout << " = ";
 			((Problem[WrongCode])->getans()).print();

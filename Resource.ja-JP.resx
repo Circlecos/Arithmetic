@@ -127,7 +127,7 @@
     <value>あなたは電子の回答により、いつでも終了することができ、結果は現在のタイトルに含まれていません</value>
   </data>
   <data name="InputNumberOfProblems" xml:space="preserve">
-    <value>アイテムの数を入力します。</value>
+    <value>アイテムの数を入力します：</value>
   </data>
   <data name="Total" xml:space="preserve">
     <value>合計：</value>
