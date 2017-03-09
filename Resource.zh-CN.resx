@@ -127,7 +127,7 @@
     <value>你可以随时按e终止答题，当前题目不计入成绩</value>
   </data>
   <data name="InputNumberOfProblems" xml:space="preserve">
-    <value>请输入题目数量</value>
+    <value>请输入题目数量：</value>
   </data>
   <data name="Total" xml:space="preserve">
     <value>总计：</value>
