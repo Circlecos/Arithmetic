@@ -32,6 +32,8 @@ int TreePoint::newnum(int randmin,int randmax)
 	return (x+randmin);
 }
 
+
+//set other variable based on symbol
 int TreePoint::set()
 {
 	int flag,x;
@@ -60,16 +62,16 @@ int TreePoint::set()
 		}
 	}
 	return 0;
-}//set other variable based on symbol
+}
 
 
 
 //public
-TreePoint::TreePoint() :prep(NULL),next(NULL),symbol('0'),priority(4),rightpriority(4),num(NULL)
+TreePoint::TreePoint() :prep(NULL),next(NULL),symbol('0'),priority(4),rightpriority(4),num(NULL)//default constructor
 {
 
 }
-//default constructor
+
 
 TreePoint::TreePoint(int model,int f):prep(NULL),next(NULL),symbol('0'),priority(4),rightpriority(3),num(NULL)
 //f==1 means root of the tree  f==2 means the second level of the tree and so on
@@ -119,14 +121,14 @@ int TreePoint::print(int lastpri)// first time lastpri=0
 	extern int wid;
 	if (lastpri>priority) {std::cout<<"( ";wid+=2;}
 	if (prep!=NULL)
-		prep->print(priority);
+		prep->print(priority);//访问左孩子
 	if (symbol!='0'&&symbol!='/')
 		{std::cout<<" "<<symbol<<" ";wid+=3;}
 	else if (symbol=='/')
 		{std::cout<<" \u00F7 ";wid+=4;}
 	else {wid+=(num->print());}
 	if (next!=NULL)
-		next->print(rightpriority);
+		next->print(rightpriority);//访问右孩子
 	if (lastpri>priority) {std::cout<<" )";wid+=2;}
 	return 0;
 }
