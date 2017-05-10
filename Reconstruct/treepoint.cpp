@@ -1,3 +1,9 @@
+/******************************************************************************
+文件名： treepoint.cpp
+作者：Circle  日期：2017/02/04
+描述："treepoint"类
+*******************************************************************************/
+
 #include "treepoint.h"
 #include <time.h>
 #include <stdlib.h>
@@ -109,21 +115,26 @@ TreePoint::~TreePoint()
 }
 
 
-int TreePoint::print(int lastpri)// first time lastpri=0
+std::string TreePoint::print(int lastpri)// first time lastpri=0
 {
 	extern int wid;
-	if (lastpri>priority) {std::cout<<"( ";wid+=2;}
+	std::string s;
+	if (lastpri>priority) {s+="( ";wid+=2;}
 	if (prep!=NULL)
-		prep->print(priority);//访问左孩子
+		s+=prep->print(priority);//访问左孩子
 	if (symbol!='0'&&symbol!='/')
-		{std::cout<<" "<<symbol<<" ";wid+=3;}
+	{
+		s += " ";
+		s += symbol;
+		s += " "; wid += 3;
+	}
 	else if (symbol=='/')
-		{std::cout<<" \u00F7 ";wid+=4;}
-	else {wid+=(num->print());}
+		{s+=" \u00F7 ";wid+=4;}
+	else { wid += (num->print()).size(); s += (num->print()); }
 	if (next!=NULL)
-		next->print(rightpriority);//访问右孩子
-	if (lastpri>priority) {std::cout<<" )";wid+=2;}
-	return 0;
+		s+=next->print(rightpriority);//访问右孩子
+	if (lastpri>priority) {s+=" )";wid+=2;}
+	return s;
 }
 
 Fraction* TreePoint::compute()// first time lastpri=0

@@ -1,5 +1,14 @@
+/******************************************************************************
+文件名： fraction.h
+作者：Circle  日期：2017/02/04
+描述："fraction"类
+*******************************************************************************/
+
+
 #ifndef FRACTION_H_
 #define FRACTION_H_
+
+#include <string>
 
 class Fraction{
 private:
@@ -13,7 +22,8 @@ public:
 	Fraction(int nu,int de);
 	Fraction(const Fraction &from);
 	~Fraction();
-	int print();
+
+	std::string print();
 	Fraction& operator= (const Fraction &rhs);
 
 	friend bool operator==(const Fraction &lhs,const Fraction &rhs);

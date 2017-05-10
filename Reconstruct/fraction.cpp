@@ -1,6 +1,13 @@
+/******************************************************************************
+文件名： fraction.cpp
+作者：Circle  日期：2017/02/04
+描述："fraction"类
+*******************************************************************************/
+
 #include "fraction.h"
 #include <iostream>
 #include <cmath>
+#include <sstream>
 
 Fraction::Fraction():nume(0),deno(1)
 {
@@ -22,14 +29,15 @@ Fraction::Fraction(const Fraction &from)
 }
 
 
-int Fraction::print()
+std::string Fraction::print()
 {
 	int width=0,widnume=0,widdeno=0;
-
-	if (nume==0) {std::cout<<"0";width+=1;return width;}
+	std::string s="";
+	
+	if (nume==0) {s+="0";width+=1;return s;}
 	if (deno*nume<0)
 	{
-		std::cout<<"-";
+		s+="-";
 		width+=1;
 		deno=abs(deno);
 		nume=abs(nume);
@@ -37,9 +45,27 @@ int Fraction::print()
 	}
 	widnume=(static_cast<int> (log10(nume)))+1;
 	widdeno=(static_cast<int> (log10(deno)))+1;
-	if (deno==1) {std::cout<<nume;width+=widnume;}
-	else {std::cout<<nume<<"/"<<deno;width+=1+widnume+widdeno;}
-	return width;
+	std::stringstream ss;
+	std::string temp;
+	if (deno == 1) 
+	{
+		ss << nume;
+		ss >> temp;
+		s += temp;
+		width += widnume;
+	}
+	else
+	{ 
+		ss << nume; 
+		ss >> temp; 
+		s += temp; 
+		s += "/"; 
+		ss << deno;
+		ss >> temp; 
+		s += temp; 
+		width += 1 + widnume + widdeno; }
+	
+	return s;
 }
 
 Fraction& Fraction::operator= (const Fraction &rhs)

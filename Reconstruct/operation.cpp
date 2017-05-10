@@ -1,6 +1,13 @@
+/******************************************************************************
+文件名： operation.cpp
+作者：Circle  日期：2017/02/04
+描述："operation"类
+*******************************************************************************/
+
 #include "operation.h"
 #include "TreePoint.h"
 #include <iostream>
+#include <string>
 
 int wid=0;
 
@@ -28,11 +35,12 @@ Operation::Operation(const Operation &from)
 {
 	root=new TreePoint(*(from.root));
 }
-int Operation::print()
+std::string Operation::print()
 {
+	std::string s;
 	wid=0;
-	root->print(0);
-	return wid;
+	s=root->print(0);
+	return s;
 }
 Fraction Operation::getans()
 {
