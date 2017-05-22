@@ -10,7 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include<string>
+#include <string>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
@@ -18,8 +18,8 @@
 #include <msclr\marshal_cppstd.h>
 #include "operation.h"
 #include "fraction.h"
+#include "interact.h"
 
-#define MAX_NUM_OF_PROBLEM 1000
 #define TO_STRING(X) marshal_as<std::string>(X)
 #define TO_SYSTEM_STRING(X) marshal_as<System::String^>(X)
 
@@ -31,60 +31,42 @@ using namespace System::Reflection;
 using namespace msclr::interop;
 using namespace std;
 
-int readFile(char *filename);
-int scan(string &s);//该函数用于与用户交互，获取输入数据
-int generateExpression(int nProblem,Operation** ArrayProblem,int *UserAns,int *corr,int *wrong,int *ArrayWrong);//用于生成运算式
-int writeFile(char *outputfilename,Operation** ArrayProblem, int *UserAns, int *corr, int *wrong, int *ArrayWrong, string &s);//将最终结果写入文件
-int print(Operation** ArrayProblem, int *UserAns, int *corr, int *wrong, int *ArrayWrong, string &s);//将统计结果输出给用户
+
+int scan(Interact& act);//该函数用于与用户交互，获取输入数据
+int generateExpression(Interact& act);//用于生成运算式
+int writeFile(char* filename, Interact& act);//将最终结果写入文件
+int print(Interact& act);//将统计结果输出给用户
 
 
 
+Interact control;
 
 int main(int argc, char *argv[])
 {
-	string str;//处理地区信息
-	int CorrNum = 0, WrongNum = 0;
-	int WrongQueNum[MAX_NUM_OF_PROBLEM];//回答错误的题目的编号
-	int intAns[MAX_NUM_OF_PROBLEM];//用户答案（数值）
-	int NumProblem = 0;
-	Operation *Problem[MAX_NUM_OF_PROBLEM];//指向题目的指针
+	
+	
 
 	//重置随机数种子
 	srand(static_cast<unsigned> (time(NULL)));
 
-	NumProblem = readFile(argv[1]);
-	scan(str);
+	control.ReadFile(argv[1]);
+	scan(control);
+	cout<<control.ShowTips()<<endl;
 
-	generateExpression(NumProblem,Problem,intAns,&CorrNum,&WrongNum,WrongQueNum);
+	generateExpression(control);
 	cout << "-----------------------------------" << endl;
-	writeFile(argv[2], Problem, intAns, &CorrNum, &WrongNum, WrongQueNum,str);
-	print(Problem, intAns,&CorrNum, &WrongNum, WrongQueNum,str);
+	writeFile(argv[2], control);
+	print(control);
 	
 	system("pause");
 
-	//结束程序前处理	
-	int i;//循环变量
-	for (i = 0; i<MAX_NUM_OF_PROBLEM; i++)
-	{
-		delete(Problem[i]);
-	}
 	return 0;
 }
 
-int readFile(char *filename)
-{
-	int nProblem;
-	fstream f1;
-	f1.open(filename,ios::in);
-	f1 >> nProblem;
-	//to-do#1: judge NumProblem
-	f1.close();
-	return nProblem;
-	
-}
-int scan(string &s)
-{
 
+int scan(Interact& act)
+{
+	string s;
 	//读取资源文件
 	Assembly^ CurrentAssem = Assembly::GetExecutingAssembly();
 	ResourceManager RcLang("LangList", CurrentAssem);
@@ -110,7 +92,10 @@ int scan(string &s)
 		while (idlanginfo->MoveNext())
 		{
 			if (idlanginfo->Key->ToString()->Equals(TO_SYSTEM_STRING(s)))//判断用户输入的语言是否已设置
+			{
 				isLang = 1;
+				s = marshal_as<std::string>(idlanginfo->Value->ToString());
+			}
 		}
 		if (isLang == 1) break;
 		else if (isLang == 0)
@@ -119,18 +104,15 @@ int scan(string &s)
 			cout<<"Please enter the prompt language by its name:";
 		}
 	}
-	//读入用户对应的resource
-	ResourceManager rc("Resource", CurrentAssem);
-	CultureInfo^ loca = gcnew CultureInfo(RcLang.GetString(TO_SYSTEM_STRING(s)), false);
-
-	//关于作答的其他说明
-
-	cout << TO_STRING(rc.GetString("InputNote", loca)) << endl;
-
+	
+	
+	int nProblem;
+	
+	act.BaseSetting(s);
 	
 	return 0;
 }
-int generateExpression(int nProblem, Operation** ArrayProblem, int *UserAns, int *corr, int *wrong, int *ArrayWrong)
+int generateExpression(Interact& act)
 {
 	char ans[MAX_NUM_OF_PROBLEM];//用户答案（字符串）
 	
@@ -138,60 +120,32 @@ int generateExpression(int nProblem, Operation** ArrayProblem, int *UserAns, int
 	int judge = 0;//判断用户答案中是否含有e
 	int num = 0;//转换用户答案
 	int i, j;//循环变量
-	for (i = 0; i < MAX_NUM_OF_PROBLEM; i++)
-		ArrayProblem[i] = NULL;
-	for (j = 0; j < nProblem; j++)
+	
+	for (j = 0; j < act.GetNumProblem(); j++)
 	{
-		ArrayProblem[j] = new Operation();
-
+		Operation &pro = act.generateExpression(j);
 		String^ ProblemCodeStr = ((j + 1).ToString());
 		ProblemCodeStr = System::String::Concat(ProblemCodeStr, ".");
 		cout<< setiosflags(ios::left) << setw(5)<<TO_STRING(ProblemCodeStr);
-		cout<<(ArrayProblem[j])->print();
+		cout<<pro.print();
 		cout << " = " ;
 
 		//输入用户答案
+		int flag=0;
 		cin >> ans;
 		len = strlen(ans);
-		judge = 0;
-		for (i = 0; i<len; i++)
+		control.GetUserAns(ans,len,flag,j);
+		if (flag == 1)
 		{
-			if (ans[i] == 'e')
-			{
-				judge = 1;//judge=1 means it contains 'e'
-			}
-			if (judge == 1)
-				break;
-		}
-		if (judge == 1)
 			break;
-
-		num = 0;
-		judge = 0;
-		if (ans[0] == '-') judge = 1;
-		for (i = 0; i<len; i++)
-		{
-			if ((judge == 1) && (i == 0)) continue;
-			num += (static_cast<int>(pow(10, len - i - 1)*(ans[i] - 48)));
 		}
-		if (judge == 1) UserAns[j] = 0 - num;
-		else UserAns[j] = num;
-		Fraction *p;//指向 分数 的指针
-		p = new Fraction(UserAns[j], 1);
-		if ((ArrayProblem[j]->getans()) == *p)
-		{
-			(*corr)++;
-		}
-		else
-		{
-			ArrayWrong[*wrong] = j;
-			(*wrong)++;
-		}
-		delete p;
+		
+		control.Judge(j);
+		
 	}
 	return 0;
 }
-int writeFile(char* filename, Operation** ArrayProblem, int *UserAns, int *corr, int *wrong, int *ArrayWrong, string &s)
+int writeFile(char* filename,Interact& act)
 {
 	fstream f1;
 	f1.open(filename, ios::out);
@@ -199,31 +153,31 @@ int writeFile(char* filename, Operation** ArrayProblem, int *UserAns, int *corr,
 	Assembly^ CurrentAssem = Assembly::GetExecutingAssembly();
 	ResourceManager RcLang("LangList", CurrentAssem);
 	ResourceManager rc("Resource", CurrentAssem);
-	CultureInfo^ loca = gcnew CultureInfo(RcLang.GetString(TO_SYSTEM_STRING(s)), false);
+	CultureInfo^ loca = gcnew CultureInfo(TO_SYSTEM_STRING(control.GetLoca()), false);
 	f1 << TO_STRING(rc.GetString("Total", loca))
-		<< setiosflags(ios::left) << setw(12) << *corr + *wrong
+		<< setiosflags(ios::left) << setw(12) << act.GetCorr() + act.GetWrong()
 		<< TO_STRING(rc.GetString("CorrectNum", loca))
-		<< setiosflags(ios::left) << setw(12) << *corr
-		<< TO_STRING(rc.GetString("WrongNum", loca)) << setiosflags(ios::left) << setw(12) << *wrong << endl;
+		<< setiosflags(ios::left) << setw(12) << act.GetCorr()
+		<< TO_STRING(rc.GetString("WrongNum", loca)) << setiosflags(ios::left) << setw(12) << act.GetWrong() << endl;
 	int WrongCode;//错误题目编号
 	int i;//循环变量
-	if (*wrong > 0)
+	if (act.GetWrong() > 0)
 	{
 		f1 << TO_STRING(rc.GetString("DetailMistake", loca)) << endl;
-		for (i = 0; i < *wrong; i++)
+		for (i = 0; i < act.GetWrong(); i++)
 		{
 			f1 << endl;
-			WrongCode = ArrayWrong[i];
+			WrongCode = act.GetWrongCode(i);
 			String^ WrongCodeStr = ((WrongCode + 1).ToString());
 			WrongCodeStr = System::String::Concat(WrongCodeStr, ".");
 			f1 << setiosflags(ios::left) << setw(5) << TO_STRING(WrongCodeStr);
-
-			f1 << (ArrayProblem[WrongCode])->print();
+			Operation *ques= act.getExpression(WrongCode);
+			f1 << (ques->print());
 			f1 << " = ";
-			f1 << ((ArrayProblem[WrongCode])->getans()).print();
+			f1 << (ques->getans()).print();
 			f1 << endl;
 			f1 << "     " << TO_STRING(rc.GetString("YourAnswer", loca));
-			f1 << UserAns[WrongCode] << endl;
+			f1 << act.GetUserAns(WrongCode) << endl;
 		}
 	}
 	f1 << endl;
@@ -231,36 +185,37 @@ int writeFile(char* filename, Operation** ArrayProblem, int *UserAns, int *corr,
 
 	return 0;
 }
-int print(Operation** ArrayProblem,int *UserAns, int *corr, int *wrong, int *ArrayWrong, string &s) {
+int print(Interact& act) {
 
 	//输出报告
 	Assembly^ CurrentAssem = Assembly::GetExecutingAssembly();
 	ResourceManager RcLang("LangList", CurrentAssem);
 	ResourceManager rc("Resource", CurrentAssem);
-	CultureInfo^ loca = gcnew CultureInfo(RcLang.GetString(TO_SYSTEM_STRING(s)), false);
+	CultureInfo^ loca = gcnew CultureInfo(TO_SYSTEM_STRING(control.GetLoca()), false);
 	cout<<TO_STRING(rc.GetString("Total",loca))
-		<<setiosflags(ios::left) << setw(12)<< *corr + *wrong
+		<<setiosflags(ios::left) << setw(12)<< act.GetCorr() + act.GetWrong()
 		<<TO_STRING(rc.GetString("CorrectNum",loca))
-		<< setiosflags(ios::left) << setw(12)<< *corr
-		<<TO_STRING(rc.GetString("WrongNum",loca)) << setiosflags(ios::left) << setw(12) << *wrong<<endl;
+		<< setiosflags(ios::left) << setw(12)<< act.GetCorr()
+		<<TO_STRING(rc.GetString("WrongNum",loca)) << setiosflags(ios::left) << setw(12) << act.GetWrong() <<endl;
 	int WrongCode;//错误题目编号
 	int i;//循环变量
-	if (*wrong > 0)
+	if (act.GetWrong() > 0)
 	{
 		cout << TO_STRING(rc.GetString("DetailMistake", loca)) << endl;
-		for (i = 0; i < *wrong; i++)
+		for (i = 0; i < act.GetWrong(); i++)
 		{
 			cout<<endl;
-			WrongCode = ArrayWrong[i];
+			WrongCode = act.GetWrongCode(i);
 			String^ WrongCodeStr = ((WrongCode + 1).ToString());
 			WrongCodeStr = System::String::Concat(WrongCodeStr, ".");
 			cout<< setiosflags(ios::left) << setw(5)<<TO_STRING(WrongCodeStr);
-			cout << (ArrayProblem[WrongCode])->print();
+			Operation *ques = act.getExpression(WrongCode);
+			cout << (ques->print());
 			cout << " = ";
-			cout<<((ArrayProblem[WrongCode])->getans()).print();
+			cout<<(ques->getans()).print();
 			cout << endl;
 			cout << "     " << TO_STRING(rc.GetString("YourAnswer", loca));
-			cout << UserAns[WrongCode] << endl;
+			cout << act.GetUserAns(WrongCode) << endl;
 		}
 	}
 	cout << endl;

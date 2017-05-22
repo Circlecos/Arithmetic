@@ -46,7 +46,7 @@ int TreePoint::set()
 	int flag,x;
 	if (symbol=='0')
 	{
-		prep=NULL;next=NULL;priority=3;
+		prep=nullptr;next=nullptr;priority=3;
 		flag=newnum(0,1);
 		if (flag==0)// int
 		{
@@ -74,13 +74,13 @@ int TreePoint::set()
 
 
 //public
-TreePoint::TreePoint() :prep(NULL),next(NULL),symbol('0'),priority(4),rightpriority(4),num(NULL)//default constructor
+TreePoint::TreePoint() :prep(nullptr),next(nullptr),symbol('0'),priority(4),rightpriority(4),num(nullptr)//default constructor
 {
 
 }
 
 
-TreePoint::TreePoint(int model,int f):prep(NULL),next(NULL),symbol('0'),priority(4),rightpriority(3),num(NULL)
+TreePoint::TreePoint(int model,int f):prep(nullptr),next(nullptr),symbol('0'),priority(4),rightpriority(3),num(nullptr)
 //f==1 means root of the tree  f==2 means the second level of the tree and so on
 //Model 1 means it can only be a operator, not a number.
 //Model 3 means it can only be a number
@@ -109,9 +109,9 @@ TreePoint::TreePoint(int model,int f):prep(NULL),next(NULL),symbol('0'),priority
 
 TreePoint::~TreePoint()
 {
-	if (prep!=NULL) delete(prep);
-	if (next!=NULL) delete(next);
-	if (num!=NULL) delete(num);
+	if (prep!=nullptr) delete(prep);
+	if (next!=nullptr) delete(next);
+	if (num!=nullptr) delete(num);
 }
 
 
@@ -120,7 +120,7 @@ std::string TreePoint::print(int lastpri)// first time lastpri=0
 	extern int wid;
 	std::string s;
 	if (lastpri>priority) {s+="( ";wid+=2;}
-	if (prep!=NULL)
+	if (prep!=nullptr)
 		s+=prep->print(priority);//访问左孩子
 	if (symbol!='0'&&symbol!='/')
 	{
@@ -131,7 +131,7 @@ std::string TreePoint::print(int lastpri)// first time lastpri=0
 	else if (symbol=='/')
 		{s+=" \u00F7 ";wid+=4;}
 	else { wid += (num->print()).size(); s += (num->print()); }
-	if (next!=NULL)
+	if (next!=nullptr)
 		s+=next->print(rightpriority);//访问右孩子
 	if (lastpri>priority) {s+=" )";wid+=2;}
 	return s;
@@ -139,21 +139,21 @@ std::string TreePoint::print(int lastpri)// first time lastpri=0
 
 Fraction* TreePoint::compute()// first time lastpri=0
 {
-	Fraction *p1=NULL,*p2=NULL,*p3=NULL;
-	if (prep!=NULL)
+	Fraction *p1=nullptr,*p2=nullptr,*p3=nullptr;
+	if (prep!=nullptr)
 		p1=prep->compute();
 	if (symbol=='0')
 		return (new Fraction(*num));
-	if (p1==NULL) { delete p1;delete p2;return NULL;};
-	if (next!=NULL)
+	if (p1==nullptr) { delete p1;delete p2;return nullptr;};
+	if (next!=nullptr)
 		p2=next->compute();
-	if (p2==NULL) { delete p1;delete p2;return NULL;};
+	if (p2==nullptr) { delete p1;delete p2;return nullptr;};
 	if (symbol=='/')
 		if (p2->ifzero()==1)//true
 		{
 			delete p1;
 			delete p2;
-			return NULL;
+			return nullptr;
 		}
 	p3=new Fraction(0,1);
 	switch (symbol)

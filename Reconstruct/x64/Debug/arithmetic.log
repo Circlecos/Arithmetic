@@ -1,5 +1,5 @@
-﻿  main.cpp
+﻿  interact.cpp
+  main.cpp
 main.cpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-  fraction.obj :托管的代码存在时 /DEBUG:FASTLINK 不受支持；正在重新启动与 /DEBUG:FULL 的链接
-  arithmetic.vcxproj -> E:\面向对象的程序设计\arithmetic 重构\x64\Debug\Arithmetic.exe
-  arithmetic.vcxproj -> E:\面向对象的程序设计\arithmetic 重构\x64\Debug\Arithmetic.pdb (Partial PDB)
+  正在生成代码...
+  arithmetic.vcxproj -> E:\面向对象的程序设计\arithmetic\Reconstruct\x64\Debug\Arithmetic.exe

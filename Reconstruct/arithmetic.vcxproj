@@ -106,12 +106,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="interact.cpp" />
     <ClCompile Include="fraction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="operation.cpp" />
     <ClCompile Include="treepoint.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="interact.h" />
     <ClInclude Include="fraction.h" />
     <ClInclude Include="operation.h" />
     <ClInclude Include="treepoint.h" />

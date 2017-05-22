@@ -27,6 +27,9 @@
     <ClCompile Include="treepoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="interact.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fraction.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="treepoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interact.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
